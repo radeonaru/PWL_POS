@@ -39,3 +39,11 @@ Route::get('/kategori/edit/{id}', [KategoriController::class, 'edit'])->name('ka
 Route::put('/kategori/update/{id}', [KategoriController::class, 'update'])->name('kategori.update');
 
 Route::get('/kategori/delete/{id}', [KategoriController::class, 'destroy'])->name('kategori.delete');
+
+Route::get('/form_level', function () {
+    return view('form_level');
+});
+
+Route::get('/form_user', function () {
+    return view('form_user');
+});
