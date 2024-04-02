@@ -14,8 +14,8 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                  <form>
-
+                  <form method="post">
+                    @csrf {{ csrf_field() }}
                     <div class="row">
                         <div class="col">
                           <!-- text input -->
