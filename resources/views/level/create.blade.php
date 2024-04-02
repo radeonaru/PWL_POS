@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('subtitle', 'kategori')
-@section('content_header_title', 'kategori')
+@section('subtitle', 'level')
+@section('content_header_title', 'level')
 @section('content_header_subtitle', 'Create')
 
 @section('content_body')
@@ -17,27 +17,26 @@
     <div class="container">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Buat Kategori</h3>
+                <h3 class="card-title">Buat Level</h3>
             </div>
 
-            <form method="post" action="../kategori">
+            <form method="post" action="../level">
             @csrf {{ csrf_field() }}
             <div class="card-body">
                 <div class="form-group">
-                    <label for="kodeKategori">Kode Kategori</label>
-                    <input type="text" class="@error('kodeKategori') is-invalid @enderror form-control" id="kodeKategori" name="kodeKategori" placeholder="Masukkan Kode Kategori">
+                    <label for="kodeLevel">Kode Level</label>
+                    <input type="text" class="@error('kodeLevel') is-invalid @enderror form-control" id="kodeLevel" name="kodeLevel" placeholder="Masukkan Kode Level">
 
-                    @error('kodeKategori')
+                    @error('kodeLevel')
                            <div class="alert alert-danger">
                                  {{ $message }}
                            </div>
                             @enderror
                 </div>
                 <div class="form-group">
-                    <label for="namaKategori">Nama kategori</label>
-                    <input type="text" class="@error('namaKategori') is-invalid @enderror form-control" id="namakategori" name="namaKategori" placeholder="Masukkan Nama Kategori">
-                    
-                    @error('namaKategori')
+                    <label for="namaLevel">Nama level</label>
+                    <input type="text" class="@error('namaLevel') is-invalid @enderror form-control" id="namaLevel" name="namaLevel" placeholder="Masukkan Nama Level">
+                    @error('namaLevel')
                            <div class="alert alert-danger">
                                  {{ $message }}
                            </div>
@@ -51,7 +50,4 @@
         </form>
         </div>
     </div>
-
-@endsection
-
-
+    @endsection

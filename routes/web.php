@@ -47,3 +47,21 @@ Route::get('/form_level', function () {
 Route::get('/form_user', function () {
     return view('form_user');
 });
+
+Route::prefix('/level')->group(function () {
+    Route::get('/', [LevelController::class, 'index']);
+    Route::get('/create', [LevelController::class, 'create']);
+    Route::post('/', [LevelController::class, 'store']);
+    Route::get('/edit/{id}', [LevelController::class, 'edit'])->name('level.edit');
+    Route::put('/update/{id}', [LevelController::class, 'update'])->name('level.update');
+    Route::get('/delete/{id}', [LevelController::class, 'destroy'])->name('level.delete');
+});
+
+Route::prefix('/user')->group(function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::get('/create', [UserController::class, 'create']);
+    Route::post('/', [UserController::class, 'store']);
+    Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/update/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::get('/delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
+});

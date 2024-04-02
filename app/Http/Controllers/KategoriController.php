@@ -43,9 +43,15 @@ class KategoriController extends Controller
         //     'kategori_nama' => $request->namaKategori,
         // ]);
 
-        $validated = $request->validate([
+        $validate = $request->validate([
             'kodeKategori' => 'bail|required|max:3|unique:m_kategori,kategori_kode',
             'namaKategori' => 'required',
+        ]);
+
+        KategoriModel::create([
+            'kategori_kode' => $validate['kodeKategori'],
+            'kategori_nama' => $validate['namaKategori'],
+        
         ]);
 
         return redirect('/kategori');
@@ -56,10 +62,16 @@ class KategoriController extends Controller
         return view('kategori.edit', ['data' => $kategori]);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id):RedirectResponse
+    {
+        $validate = $request->validate([
+            'kodeKategori' => 'bail|required|max:3|unique:m_kategori,kategori_kode,'.$id.',kategori_id',
+            'namaKategori' => 'required',
+        ]);
+
         $kategori = KategoriModel::find($id);
-        $kategori->kategori_kode = $request->kategori_kode;
-        $kategori->kategori_nama = $request->kategori_nama;
+        $kategori->kategori_kode = $validate['kodeKategori'];
+        $kategori->kategori_nama = $validate['namaKategori'];
         $kategori->save();
         return redirect('/kategori');
     }
