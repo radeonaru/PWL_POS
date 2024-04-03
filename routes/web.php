@@ -59,15 +59,26 @@ Route::prefix('/level')->group(function () {
     Route::get('/delete/{id}', [LevelController::class, 'destroy'])->name('level.delete');
 });
 
-Route::prefix('/user')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::get('/create', [UserController::class, 'create']);
-    Route::post('/', [UserController::class, 'store']);
-    Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
-    Route::put('/update/{id}', [UserController::class, 'update'])->name('user.update');
-    Route::get('/delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
-});
+// Route::prefix('/user')->group(function () {
+//     Route::get('/', [UserController::class, 'index']);
+//     Route::get('/create', [UserController::class, 'create']);
+//     Route::post('/', [UserController::class, 'store']);
+//     Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
+//     Route::put('/update/{id}', [UserController::class, 'update'])->name('user.update');
+//     Route::get('/delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
+// });
 
 Route::resource('m_user', POSController::class);
 
 Route::get('/', [WelcomeController::class, 'index']);
+
+Route::prefix('/user')->group(function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::get('/create', [UserController::class, 'create']);
+    Route::post('/list', [UserController::class, 'list']);
+    Route::post('/', [UserController::class, 'store']);
+    Route::get('/{id}', [UserController::class, 'show']);
+    Route::get('/{id}/edit', [UserController::class, 'edit']);
+    Route::put('/{id}', [UserController::class, 'update']);
+    Route::delete('/{id}', [UserController::class, 'destroy']);
+});

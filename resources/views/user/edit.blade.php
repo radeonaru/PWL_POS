@@ -1,113 +1,83 @@
-@extends('adminlte::page')
-@section('title', 'General Form')
-@section('content_header')
-    <h1>Form Edit User</h1>
-@stop
+@extends('layouts.template')
+
 @section('content')
-@if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
-
-    <div class="card card-primary">
+    <div class="card card-outline card-primary">
         <div class="card-header">
-            <h3 class="card-title">Edit Data User</h3>
+            <h3 class="card-title">{{ $page->title }}</h3>
+            <div class="card-tools"></div>
         </div>
-
         <div class="card-body">
-            <form method="POST" action="{{url ('user/update',$data->user_id)}}">
-                @csrf
-                @method('PUT')
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="user_id">User ID</label>
-                            <input type="text" class="form-control" id="user_id" name="user_id" 
-                                value="{{ $data->user_id}}"disabled>
-                        </div>
-                    </div>
+            @empty($user)
+                <div class="alert alert-danger alert-dismissible">
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5> Data yang Anda cari tidak ditemukan.
                 </div>
+                <a href="{{ url('user') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+            @else
+                <form method="POST" action="{{ url('/user/' . $user->user_id) }}" class="form-horizontal">
 
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="level_id">Level ID</label>
-                            <select class="form-control" name="level_id">
-                                <option value=1 {{ $data->level_id == 1 ? 'selected' : '' }}>Administrator</option>
-                                <option value=2 {{ $data->level_id == 2 ? 'selected' : '' }}>Manager</option>
-                                <option value=3 {{ $data->level_id == 3 ? 'selected' : '' }}>Staff/Kasir</option>
-                                <option value=4 {{ $data->level_id == 4 ? 'selected' : '' }}>Customer</option>
+                    @csrf
+                    {!! method_field('PUT') !!} <!-- tambahkan baris ini untuk proses edit yang butuh method PUT -->
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Level</label>
+                        <div class="col-11">
+                            <select class="form-control" id="level_id" name="level_id" required>
+                                <option value="">- Pilih Level -</option>
+                                @foreach ($level as $item)
+                                    <option value="{{ $item->level_id }}" @if ($item->level_id == $user->level_id) selected @endif>
+                                        {{ $item->level_nama }}</option>
+                                @endforeach
                             </select>
+                            @error('level_id')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                     </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" class="@error('username') is-invalid @enderror form-control" id="username" name="username" 
-                                value="{{ $data->username}}">  
-                                @error('username')
-                                <div class="alert alert-danger">
-                                      {{ $message }}
-                                </div>
-                                 @enderror
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Username</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="username" name="username"
+                                value="{{ old('username', $user->username) }}" required>
+                            @error('username')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="nama">Nama</label>
-                            <input type="text" class="@error('nama') is-invalid @enderror form-control" id="nama" name="nama" 
-                                value="{{ $data->nama}}">
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Nama</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="nama" name="nama"
+                                value="{{ old('nama', $user->nama) }}" required>
                             @error('nama')
-                           <div class="alert alert-danger">
-                                 {{ $message }}
-                           </div>
+                                <small class="form-text text-danger">{{ $message }}</small>
                             @enderror
                         </div>
                     </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="@error('password') is-invalid @enderror form-control" id="password" name="password" 
-                                value="{{ $data->password}}">
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Password</label>
+                        <div class="col-11">
+                            <input type="password" class="form-control" id="password" name="password">
                             @error('password')
-                           <div class="alert alert-danger">
-                                 {{ $message }}
-                           </div>
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @else
+                                <small class="form-text text-muted">Abaikan (jangan diisi) jika tidak ingin mengganti password
+                                    user.</small>
                             @enderror
                         </div>
                     </div>
-                </div>
-
-                <a href="{{url('/user')}}" class="btn btn-danger">Kembali</a>
-                <button type="submit" class="btn btn-primary">Update</button>
-            </form>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label"></label>
+                        <div class="col-11">
+                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                            <a class="btn btn-sm btn-default ml-1" href="{{ url('user') }}">Kembali</a>
+                        </div>
+                    </div>
+                </form>
+            @endempty
         </div>
     </div>
-@stop
+@endsection
 
-@section('css')
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-@stop
-
-@section('js')
-    <script>
-        console.log("Hi, I'm using the Laravel-AdminLTE package!");
-    </script>
-@stop
+@push('css')
+@endpush
+@push('js')
+@endpush
