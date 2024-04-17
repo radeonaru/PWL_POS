@@ -1,5 +1,4 @@
 @extends('layouts.template')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
@@ -9,14 +8,15 @@
         <div class="card-body">
             @empty($user)
                 <div class="alert alert-danger alert-dismissible">
-                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5> Data yang Anda cari tidak ditemukan.
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
+                    Data yang Anda cari tidak ditemukan.
                 </div>
-                <a href="{{ url('user') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+                <a href="{{ url('user') }}" class="btn btn-sm btn-default mt2">Kembali</a>
             @else
                 <form method="POST" action="{{ url('/user/' . $user->user_id) }}" class="form-horizontal">
-
                     @csrf
-                    {!! method_field('PUT') !!} <!-- tambahkan baris ini untuk proses edit yang butuh method PUT -->
+                    {!! method_field('PUT') !!} <!-- tambahkan baris ini untuk proses edit
+        yang butuh method PUT -->
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Level</label>
                         <div class="col-11">
@@ -45,9 +45,9 @@
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Nama</label>
                         <div class="col-11">
-                            <input type="text" class="form-control" id="nama" name="nama"
-                                value="{{ old('nama', $user->nama) }}" required>
-                            @error('nama')
+                            <input type="text" class="form-control" id="name" name="name"
+                                value="{{ old('name', $user->name) }}" required>
+                            @error('name')
                                 <small class="form-text text-danger">{{ $message }}</small>
                             @enderror
                         </div>
@@ -59,8 +59,8 @@
                             @error('password')
                                 <small class="form-text text-danger">{{ $message }}</small>
                             @else
-                                <small class="form-text text-muted">Abaikan (jangan diisi) jika tidak ingin mengganti password
-                                    user.</small>
+                                <small class="form-text text-muted">Abaikan (jangan diisi) jika
+                                    tidak ingin mengganti password user.</small>
                             @enderror
                         </div>
                     </div>
@@ -76,7 +76,6 @@
         </div>
     </div>
 @endsection
-
 @push('css')
 @endpush
 @push('js')

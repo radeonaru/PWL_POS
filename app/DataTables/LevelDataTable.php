@@ -2,6 +2,7 @@
 
 namespace App\DataTables;
 
+use App\Models\Level;
 use App\Models\LevelModel;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;

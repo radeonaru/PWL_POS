@@ -1,80 +1,55 @@
-@extends('adminlte::page')
-@section('title', 'General Form')
-@section('content_header')
-    <h1>Edit Level Form</h1>
-@stop
+@extends('layouts.template')
 @section('content')
-@if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
-    <div class="card card-primary">
+    <div class="card card-outline card-primary">
         <div class="card-header">
-            <h3 class="card-title">Edit Level</h3>
+            <h3 class="card-title">{{ $page->title }}</h3>
+            <div class="card-tools"></div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{url ('level/update',$data->level_id)}}">
-                @csrf
-                @method('PUT')
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="level_id">Level ID</label>
-                            <input type="text" class="form-control" id="level_id" name="level_id" 
-                                value="{{ $data->level_id}}" disabled>
-                        </div>
-                    </div>
+            @empty($level)
+                <div class="alert alert-danger alert-dismissible">
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
+                    Data yang Anda cari tidak ditemukan.
                 </div>
+                <a href="{{ url('level') }}" class="btn btn-sm btn-default mt2">Kembali</a>
+            @else
+                <form method="POST" action="{{ url('/level/' . $level->level_id) }}" class="form-horizontal">
+                    @csrf
+                    {!! method_field('PUT') !!} <!-- tambahkan baris ini untuk proses edit yang butuh method PUT -->
 
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="kodeLevel">Kode Level</label>
-                            <input type="text" class="@error('kodeLevel') is-invalid @enderror form-control" id="kodeLevel" name="kodeLevel" 
-                                value="{{ $data->level_kode}}">  
-                            @error('kodeLevel')
-                           <div class="alert alert-danger">
-                                 {{ $message }}
-                           </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Level Kode</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="level_kode" name="level_kode"
+                                value="{{ old('level_kode', $level->level_kode) }}" required>
+                            @error('level_kode')
+                                <small class="form-text text-danger">{{ $message }}</small>
                             @enderror
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="namaLevel">Nama Level</label>
-                            <input type="text" class="@error('namaLevel') is-invalid @enderror form-control" id="namaLevel" name="namaLevel" 
-                                value="{{ $data->level_nama}}">
-                            @error('namaLevel')
-                           <div class="alert alert-danger">
-                                 {{ $message }}
-                           </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Level Nama</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="level_nama" name="level_nama"
+                                value="{{ old('level_nama', $level->level_nama) }}" required>
+                            @error('level_nama')
+                                <small class="form-text text-danger">{{ $message }}</small>
                             @enderror
                         </div>
                     </div>
-                </div>
-
-                <a href="{{url('/level')}}" class="btn btn-danger">Kembali</a>
-                <button type="submit" class="btn btn-primary">Update</button>
-            </form>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label"></label>
+                        <div class="col-11">
+                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                            <a class="btn btn-sm btn-default ml-1" href="{{ url('level') }}">Kembali</a>
+                        </div>
+                    </div>
+                </form>
+            @endempty
         </div>
     </div>
-@stop
-
-@section('css')
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-@stop
-
-@section('js')
-    <script>
-        console.log("Hi, I'm using the Laravel-AdminLTE package!");
-    </script>
-@stop
+@endsection
+@push('css')
+@endpush
+@push('js')
+@endpush

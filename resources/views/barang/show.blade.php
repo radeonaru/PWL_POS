@@ -6,7 +6,7 @@
             <div class="card-tools"></div>
         </div>
         <div class="card-body">
-            @empty($user)
+            @empty($barang)
                 <div class="alert alert-danger alert-dismissible">
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
                     Data yang Anda cari tidak ditemukan.
@@ -15,28 +15,32 @@
                 <table class="table table-bordered table-striped table-hover tablesm">
                     <tr>
                         <th>ID</th>
-                        <td>{{ $user->user_id }}</td>
+                        <td>{{ $barang->barang_id }}</td>
                     </tr>
                     <tr>
-                        <th>Level</th>
-                        <td>{{ $user->level->level_nama }}</td>
+                        <th>Kategori</th>
+                        <td>{{ $barang->kategori->kategori_nama }}</td>
                     </tr>
                     <tr>
-                        <th>Username</th>
-                        <td>{{ $user->username }}</td>
+                        <th>Kode Barang</th>
+                        <td>{{ $barang->barang_kode }}</td>
                     </tr>
                     <tr>
-                        <th>Nama</th>
-                        <td>{{ $user->name }}</td>
+                        <th>Nama Barang</th>
+                        <td>{{ $barang->barang_nama }}</td>
                     </tr>
                     <tr>
-                        <th>Password</th>
-                        <td>********</td>
+                        <th>Harga Beli</th>
+                        <td>{{ $barang->harga_beli }}</td>
+                    </tr>
+                    <tr>
+                        <th>Harga Jual</th>
+                        <td>{{ $barang->harga_jual }}</td>
                     </tr>
                 </table>
             @endempty
             <br>
-            <a href="{{ url('user') }}" class="btn btn-sm btn-default mt2">Kembali</a>
+            <a href="{{ url('barang') }}" class="btn btn-sm btn-default mt2">Kembali</a>
         </div>
     </div>
 @endsection

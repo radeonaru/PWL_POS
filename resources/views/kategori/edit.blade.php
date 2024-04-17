@@ -1,58 +1,55 @@
-@extends('layouts.app')
-
-@section('subtitle', 'Edit Kategori')
-@section('content_header_title', 'Kategori')
-@section('content_header_subtitle', 'Edit')
-
+@extends('layouts.template')
 @section('content')
-@if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
-    <div class="container">
-        <div class="card">
-            <div class="card-header">Edit Kategori</div>
-            <div class="card-body">
-                <form action="{{ url('kategori/update', $data->kategori_id) }}" method="POST">
+    <div class="card card-outline card-primary">
+        <div class="card-header">
+            <h3 class="card-title">{{ $page->title }}</h3>
+            <div class="card-tools"></div>
+        </div>
+        <div class="card-body">
+            @empty($kategori)
+                <div class="alert alert-danger alert-dismissible">
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
+                    Data yang Anda cari tidak ditemukan.
+                </div>
+                <a href="{{ url('kategori') }}" class="btn btn-sm btn-default mt2">Kembali</a>
+            @else
+                <form method="POST" action="{{ url('/kategori/' . $kategori->kategori_id) }}" class="form-horizontal">
                     @csrf
-                    @method('PUT')
+                    {!! method_field('PUT') !!} <!-- tambahkan baris ini untuk proses edit yang butuh method PUT -->
 
-                    <div class="form-group">
-                        <label for="kategori_id">Kategori ID</label>
-                        <input type="text" class="form-control" id="kategori_id" name="kategori_id" value="{{ $data->kategori_id }}" disabled>
-
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Kategori Kode</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="kategori_kode" name="kategori_kode"
+                                value="{{ old('kategori_kode', $kategori->kategori_kode) }}" required>
+                            @error('kategori_kode')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="kodeKategori">Kategori Kode</label>
-                        <input type="text" class="@error('kodeKategori') is-invalid @enderror form-control" id="kodeKategori" name="kodeKategori" value="{{ $data->kategori_kode }}">
-                        @error('kodeKategori')
-                           <div class="alert alert-danger">
-                                 {{ $message }}
-                           </div>
-                        @enderror
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Kategori Nama</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="kategori_nama" name="kategori_nama"
+                                value="{{ old('kategori_nama', $kategori->kategori_nama) }}" required>
+                            @error('kategori_nama')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="namaKategori">Kategori Nama</label>
-                        <input type="text" class="@error('namaKategori') is-invalid @enderror form-control" id="namaKategori" name="namaKategori" value="{{ $data->kategori_nama }}">
-                        @error('namaKategori')
-                           <div class="alert alert-danger">
-                                 {{ $message }}
-                           </div>
-                        @enderror
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label"></label>
+                        <div class="col-11">
+                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                            <a class="btn btn-sm btn-default ml-1" href="{{ url('kategori') }}">Kembali</a>
+                        </div>
                     </div>
-
-                    <a class="btn btn-danger" href={{url('/kategori') }}>Kembali</a>
-                    <button type="submit" class="btn btn-primary">Update</button>
                 </form>
-            </div>
+            @endempty
         </div>
     </div>
-
 @endsection
+@push('css')
+@endpush
+@push('js')
+@endpush
