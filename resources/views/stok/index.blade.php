@@ -1,5 +1,4 @@
 @extends('layouts.template')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
@@ -8,26 +7,37 @@
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('stok/create') }}">Tambah</a>
             </div>
         </div>
-
         <div class="card-body">
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
-            @elseif(session('error'))
+            @endif
+            @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Filter:</label>
+                        <label class="col-1 control-label col-form-label">Filter</label>
                         <div class="col-3">
-                            <select name="barang_id" id="barang_id" class="form-control" required>
+                            <select class="form-control" id="user_id" name="user_id" required>
+                                <option value="">- Semua -</option>
+                                @foreach ($user as $item)
+                                <option value="{{ $item->user_id }}">{{ $item->name }}</option>                                
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">User</small>
+                        </div>
+
+                        <div class="col-3">
+                            <select class="form-control" id="barang_id" name="barang_id" required>
                                 <option value="">- Semua -</option>
                                 @foreach ($barang as $item)
-                                    <option value="{{ $item->barang_id }}">{{ $item->barang_nama }}</option>
+                                <option value="{{ $item->barang_id }}">{{ $item->barang_nama }}</option>                                
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">Barang</small>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -35,10 +45,10 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Pengelola</th>
-                        <th>Nama Barang</th>
-                        <th>Tanggal</th>
-                        <th>Jumlah</th>
+                        <th>Barang</th>
+                        <th>User</th>
+                        <th>Tanggal Stok</th>
+                        <th>Jumlah Stok</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -46,65 +56,78 @@
         </div>
     </div>
 @endsection
-
 @push('css')
 @endpush
-
 @push('js')
     <script>
         $(document).ready(function() {
             var dataStok = $('#table_stok').DataTable({
-                serverSide: true, // True if we want to use Server side processing
+                serverSide: true, // serverSide: true, jika ingin menggunakan server
+               
                 ajax: {
                     "url": "{{ url('stok/list') }}",
                     "dataType": "json",
                     "type": "POST",
-                    "data": function(d) {
+                    "data": function (d){
+                        d.user_id = $('#user_id').val();
                         d.barang_id = $('#barang_id').val();
                     }
                 },
-                columns: [{
-                        data: "stok_id", // numbering from laravel datatables addIndexColumn() function
-                        className: "text-center",
-                        orderable: true,
-                        searchable: false
-                    },
-                    {
-                        data: "user.nama",
-                        className: "text-center",
-                        orderable: true, // orderable: false, if we want this column not orderable
-                        searchable: true // searchable: false, if we want this column not searchable
-                    },
-                    {
-                        data: "barang.barang_nama",
-                        className: "text-center",
-                        orderable: true, // orderable: true, if we want this column is orderable
-                        searchable: true, // searchable: true, if we want this column searchable
-                    },
-                    {
-                        data: "stok_tanggal",
-                        className: "text-center",
-                        orderable: true, // orderable: true, if we want this column is orderable
-                        searchable: true, // searchable: true, if we want this column searchable
-                    },
-                    {
-                        data: "stok_jumlah",
-                        className: "text-center",
-                        orderable: true, // orderable: true, if we want this column is orderable
-                        searchable: true, // searchable: true, if we want this column searchable
-                    },
-                    {
-                        data: "aksi",
-                        className: "",
-                        orderable: false, // orderable: false, if we want this column not orderable
-                        searchable: false // searchable: false, if we want this column not searchable
-                    }
-                ]
+
+                
+
+                columns: [
+                {
+                    data: "DT_RowIndex", // nomor urut dari laravel datatable
+                    className: "text-center",
+                    orderable: false,
+                    searchable: false
+                }, 
+                {
+                    data: "barang.barang_nama",
+                    className: "",
+                    orderable: true, // orderable: true, jika ingin kolom ini bisa
+                    searchable: true // searchable: true, jika ingin kolom ini bisa
+                    
+                }, 
+                {
+                    data: "user.nama",
+                    className: "",
+                    orderable: true, // orderable: true, jika ingin kolom ini bisa
+                    searchable: true // searchable: true, jika ingin kolom ini bisa
+                    
+                }, 
+                {
+                    data: "stok_tanggal",
+                    className: "",
+                    orderable: true, // orderable: true, jika ingin kolom ini bisa
+                    searchable: true // searchable: true, jika ingin kolom ini bisa
+                    
+                },
+                {
+                    data: "stok_jumlah",
+                    className: "",
+                    orderable: true, // orderable: true, jika ingin kolom ini bisa
+                    searchable: true // searchable: true, jika ingin kolom ini bisa
+                    
+                },  
+                {
+                    data: "aksi",
+                    className: "",
+                    orderable: false, // orderable: true, jika ingin kolom ini bisa
+                    searchable: false // searchable: true, jika ingin kolom ini bisa
+                    
+                }]
             });
-            $('#barang_id').on('change', function() {
+
+            $('#user_id').on('change', function(){
                 dataStok.ajax.reload();
             });
-            console.log(dataStok)
+
+            $('#barang_id').on('change', function(){
+                dataStok.ajax.reload();
+            });
+
         });
     </script>
 @endpush

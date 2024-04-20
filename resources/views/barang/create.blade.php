@@ -10,7 +10,7 @@
             <form method="POST" action="{{ url('barang') }}" class="form-horizontal">
                 @csrf
                 <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Level</label>
+                    <label class="col-1 control-label col-form-label">Kategori</label>
                     <div class="col-11">
                         <select class="form-control" id="kategori_id" name="kategori_id" required>
                             <option value="">- Pilih Kategori -</option>

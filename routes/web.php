@@ -45,7 +45,7 @@ Route::prefix('/barang')->group(function () {
     Route::post('/list', [BarangController::class, 'list']);
     Route::post('/', [BarangController::class, 'store']);
     Route::get('/{id}', [BarangController::class, 'show']);
-    Route::get('/{id}/edit', [BarangController::class, 'edit']);
+    Route::get('/edit/{id}', [BarangController::class, 'edit']);
     Route::put('/{id}', [BarangController::class, 'update']);
     Route::delete('/{id}', [BarangController::class, 'destroy']);
 });
@@ -78,7 +78,7 @@ Route::prefix('/stok')->group(function () {
     Route::post('/list', [StokController::class, 'list']);
     Route::post('/', [StokController::class, 'store']);
     Route::get('/{id}', [StokController::class, 'show']);
-    Route::get('/{id}/edit', [StokController::class, 'edit']);
+    Route::get('/edit/{id}', [StokController::class, 'edit']);
     Route::put('/{id}', [StokController::class, 'update']);
     Route::delete('/{id}', [StokController::class, 'destroy']);
 });
@@ -89,7 +89,5 @@ Route::prefix('/penjualan')->group(function () {
     Route::post('/list', [PenjualanController::class, 'list']);
     Route::post('/', [PenjualanController::class, 'store']);
     Route::get('/{id}', [PenjualanController::class, 'show']);
-    Route::get('/{id}/edit', [PenjualanController::class, 'edit']);
-    Route::put('/{id}', [PenjualanController::class, 'update']);
     Route::delete('/{id}', [PenjualanController::class, 'destroy']);
 });

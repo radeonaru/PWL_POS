@@ -1,5 +1,4 @@
 @extends('layouts.template')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
@@ -9,43 +8,39 @@
         <div class="card-body">
             @empty($stok)
                 <div class="alert alert-danger alert-dismissible">
-                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5> Data yang Anda cari tidak ditemukan.
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
+                    Data yang Anda cari tidak ditemukan.
                 </div>
             @else
-                <table class="table table-bordered table-striped table-hover table-sm">
+                <table class="table table-bordered table-striped table-hover tablesm">
                     <tr>
-                        <th>Stok ID</th>
+                        <th>ID</th>
                         <td>{{ $stok->stok_id }}</td>
                     </tr>
                     <tr>
-                        <th>Pengelola</th>
-                        <td>{{ $stok->user->nama }}</td>
-                    </tr>
-                    <tr>
-                        <th>Barang Kode</th>
-                        <td>{{ $stok->barang->barang_kode }}</td>
-                    </tr>
-                    <tr>
-                        <th>Barang Nama</th>
+                        <th>Barang</th>
                         <td>{{ $stok->barang->barang_nama }}</td>
                     </tr>
                     <tr>
-                        <th>Tanggal</th>
+                        <th>User</th>
+                        <td>{{ $stok->user->nama }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tanggal Stok</th>
                         <td>{{ $stok->stok_tanggal }}</td>
                     </tr>
                     <tr>
-                        <th>Jumlah</th>
+                        <th>Jumlah Stok</th>
                         <td>{{ $stok->stok_jumlah }}</td>
                     </tr>
                 </table>
             @endempty
-            <a href="{{ url('stok') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+            <br>
+            <a href="{{ url('stok') }}" class="btn btn-sm btn-default mt2">Kembali</a>
         </div>
     </div>
 @endsection
-
 @push('css')
 @endpush
-
 @push('js')
 @endpush

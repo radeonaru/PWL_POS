@@ -17,6 +17,8 @@ class PenjualanDetailModel extends Model
 
     protected $guarded = 'detail_id';
 
+    protected $fillable = ['penjualan_id', 'barang_id', 'harga', 'jumlah'];
+
     public function penjualan(): BelongsTo
 
     {

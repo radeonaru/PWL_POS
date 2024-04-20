@@ -1,6 +1,6 @@
 @extends('layouts.template')
-
 @section('content')
+
     <div class="card card-outline card-primary">
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
@@ -8,22 +8,7 @@
         </div>
         <div class="card-body">
             <form method="POST" action="{{ url('stok') }}" class="form-horizontal">
-
                 @csrf
-                <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Pengelola</label>
-                    <div class="col-11">
-                        <select class="form-control" id="user_id" name="user_id" required>
-                            <option value="">- Pilih Pengelola -</option>
-                            @foreach ($user as $item)
-                                <option value="{{ $item->user_id }}">{{ $item->nama }}</option>
-                            @endforeach
-                        </select>
-                        @error('user_id')
-                            <small class="form-text text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
                 <div class="form-group row">
                     <label class="col-1 control-label col-form-label">Barang</label>
                     <div class="col-11">
@@ -39,20 +24,34 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Stok Tanggal</label>
+                    <label class="col-1 control-label col-form-label">User</label>
                     <div class="col-11">
-                        <input type="datetime-local" class="form-control" id="stok_tanggal" name="stok_tanggal"
-                            value="{{ old('stok_tanggal') }}" required>
+                        <select class="form-control" id="user_id" name="user_id" required>
+                            <option value="">- Pilih User -</option>
+                            @foreach ($user as $item)
+                                <option value="{{ $item->user_id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('user_id')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Tanggal Stok</label>
+                    <div class="col-11">
+                        <input type="date" class="form-control" id="stok_tanggal" name="stok_tanggal"
+                            value="{{ old('stok_tanggal') }}" required placeholder="Masukkan Tanggal Stok">
                         @error('stok_tanggal')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Jumlah</label>
+                    <label class="col-1 control-label col-form-label">Jumlah Stok</label>
                     <div class="col-11">
-                        <input type="number" class="form-control" id="stok_jumlah" name="stok_jumlah"
-                            value="{{ old('stok_jumlah') }}" required>
+                        <input type="number" class="form-control" id="stok_jumlah" name="stok_jumlah" value="{{ old('stok_jumlah') }}"
+                            required placeholder="Masukkan Jumlah Stok">
                         @error('stok_jumlah')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror

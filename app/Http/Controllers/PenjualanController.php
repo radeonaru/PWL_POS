@@ -2,252 +2,183 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\barangModel;
-use App\Models\userModel;
+use App\Models\BarangModel;
 use App\Models\PenjualanDetailModel;
 use App\Models\PenjualanModel;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
+use App\Models\StokModel;
+use App\Models\UserModel;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
 
 class PenjualanController extends Controller
 {
-    public function index(): View
+    public function index()
     {
-        $breadcrumb = (object) [
+        $breadcrumb = (object)[
             'title' => 'Daftar Penjualan',
             'list' => ['Home', 'Penjualan']
         ];
 
         $page = (object) [
-            'title' => 'Daftar Penjualan yang terdaftar dalam sistem'
+            'title' => 'Daftar Penjualan yang Terdaftar Dalam Sistem'
         ];
 
-        /**
-         * Set active menu
-         */
         $activeMenu = 'penjualan';
 
-        /**
-         * Retrieve all user data for filter in penjualan table, columns are dependable filter requirement
-         */
-        $users = userModel::select(['user_id', 'nama'])->get();
+        $user = UserModel::all();
 
-        return view('penjualan.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'users' => $users, 'activeMenu' => $activeMenu]);
+        return view('penjualan.index', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'activeMenu' => $activeMenu,
+            'user' => $user,
+        ]);
     }
 
-    /**
-     * take penjualan data in JSON format for datatables
-     * @throws \Exception
-     */
-    public function list(Request $request): JsonResponse
+    public function list(Request $request)
     {
-        $penjualans = PenjualanModel::with('user');
+        $penjualans = PenjualanModel::select('penjualan_id', 'user_id', 'penjualan_kode', 'pembeli', 'penjualan_tanggal')->with('user');
 
-        /**
-         * Filter Barang data that we retrieve above base kategori_id retrieved in barang.index view
-         */
+        //Filter Data User
         if ($request->user_id) {
             $penjualans->where('user_id', $request->user_id);
         }
 
-        /**
-         * Option for not filtered or use all stok data
-         */
-        $penjualans = $penjualans->get();
-
         return DataTables::of($penjualans)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($penjualan) {
-                $btn  = '<a href="' . url('/penjualan/' . $penjualan->penjualan_id) . '" class="btn btn-info btn-sm">Detail</a> ';
-                $btn .= '<a href="' . url('/penjualan/' . $penjualan->penjualan_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
-                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/penjualan/' . $penjualan->penjualan_id) . '">'
-
-                    . csrf_field()
-                    . method_field('DELETE') .
-                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakit menghapus data ini?\');">Hapus</button>
-                        </form>';
+            ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
+            ->addColumn('aksi', function ($penjualan) { // menambahkan kolom aksi
+                $btn = '<a href="' . url('/penjualan/' . $penjualan->penjualan_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/penjualan/' . $penjualan->penjualan_id) . '">' . csrf_field() . method_field('DELETE') .
+                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';
                 return $btn;
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): View
+    public function create()
     {
-        $breadcrumb = (object) [
-            'title' => 'Tambah Penjualan',
-            'list' => ['Home', 'Penjualan', 'Tambah']
+        $breadcrumb = (object)[
+            'title' => 'Tambah Transaksi',
+            'list' => ['Home', 'Stok', 'Tambah Transaksi']
         ];
 
         $page = (object) [
-            'title' => 'Tambah Penjualan baru'
+            'title' => 'Tambah Transaksi'
         ];
 
-        $barangs = barangModel::all();
-        $users = userModel::all();
-
+        $user = UserModel::all();
+        $barang = BarangModel::with('stok')->get();
         $activeMenu = 'penjualan';
 
-        return view('penjualan.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'barangs' => $barangs, 'users' => $users, 'activeMenu' => $activeMenu]);
-    }
+        $counter = (PenjualanModel::selectRaw("CAST(RIGHT(penjualan_kode, 3) AS UNSIGNED) AS counter")->orderBy('penjualan_id', 'desc')->value('counter')) + 1;
+        $penjualan_kode = 'PJ' . sprintf("%04d", $counter);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $isKodePenjualan = PenjualanModel::where('penjualan_kode', $request->penjualan_kode)->first();
-        $isPengelola = PenjualanModel::where('user_id', $request->user_id)->first();
-        if ($isKodePenjualan and $isPengelola) {
-            $penjualan_id = $isKodePenjualan->penjualan_id;
-        } else {
-            $penjualan_id = PenjualanModel::insertGetId([
-                'user_id' => $request->user_id,
-                'pembeli' => $request->pembeli,
-                'penjualan_kode' => $request->penjualan_kode,
-                'penjualan_tanggal' => now(),
-            ]);
-        }
-        $barang = barangModel::find($request->barang_id);
-
-        PenjualanDetailModel::insert([
-            'penjualan_id' => $penjualan_id,
-            'barang_id' => $request->barang_id,
-            'harga' => $barang->harga_jual,
-            'jumlah' => $request->jumlah,
+        return view('penjualan.create', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'user' => $user,
+            'barang' => $barang,
+            'penjualan_kode' => $penjualan_kode,
+            'activeMenu' => $activeMenu
         ]);
-        return redirect('/penjualan')->with('success', 'Data penjualan berhasil disimpan');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id): View
+    public function store(Request $request)
     {
-        $details = PenjualanDetailModel::with('barang', 'penjualan')->where('penjualan_id', $id)->get();
+        // dd($request->all());
+        $request->validate([
+            'user_id' => 'required|integer',
+            'penjualan_kode' => 'required|string|unique:t_penjualan,penjualan_kode',
+            'pembeli' => 'required|string|max:100',
+            'barang_id.*' => 'required|integer',
+            'jumlah.*' => 'required|integer',
+            'harga.*' => 'required|integer',
 
-        $breadcrumb = (object)[
+        ]);
+
+        foreach ($request->barang_id as $key => $barang_id) {
+            // Cek stok yang tersedia
+            $stok = StokModel::where('barang_id', $barang_id)->value('stok_jumlah');
+            $nama_barang = BarangModel::where('barang_id', $barang_id)->value('barang_nama');
+            $requestedQuantity = $request->jumlah[$key];
+
+            if ($stok < $requestedQuantity) {
+
+                // Jika jumlah yang diminta melebihi stok yang tersedia, kembalikan pesan kesalahan
+                return redirect()->back()->withInput()->withErrors(['jumlah.' . $key => 'Jumlah Melebihi Stok yang Tersedia. Stok "' .$nama_barang.'" Saat Ini: ' . $stok]);
+            }
+        }
+
+        $penjualan = PenjualanModel::create([
+            'user_id' => $request->user_id,
+            'penjualan_kode' => $request->penjualan_kode,
+            'pembeli' => $request->pembeli,
+            'penjualan_tanggal' => $request->penjualan_tanggal
+        ]);
+
+
+
+        // tabel t_penjualan_detail
+        $barang_ids = $request->barang_id;
+        $jumlahs = $request->jumlah;
+        $hargas = $request->harga; 
+
+        foreach ($barang_ids as $key => $barang_id) {
+            PenjualanDetailModel::create([
+                'penjualan_id' => $penjualan->penjualan_id,
+                'barang_id' => $barang_id,
+                'harga' => $hargas[$key],
+                'jumlah' => $jumlahs[$key],
+            ]);
+
+            $stok = (StokModel::where('barang_id', $barang_id)->value('stok_jumlah')) - $jumlahs[$key];
+            $date = date('Y-m-d');
+            StokModel::where('barang_id', $barang_id)->update(['stok_jumlah' => $stok, 'stok_tanggal' => $date, 'user_id' => $request->user_id]);
+        }
+
+
+        return redirect()->route('penjualan.show', $penjualan->penjualan_id)->with('success', 'Data Transaksi Berhasil Disimpan');
+    }
+
+    public function show(string $id)
+    {
+        $penjualan = PenjualanModel::find($id);
+        $penjualan_detail = PenjualanDetailModel::where('penjualan_id', $id)->get();
+
+        $breadcrumb = (object) [
             'title' => 'Detail Penjualan',
             'list' => ['Home', 'Penjualan', 'Detail']
         ];
 
-        $page = (object)[
-            'title' => 'Detail Penjualan'
-        ];
-
-        /**
-         * Set active menu
-         */
-        $activeMenu = 'penjualan';
-
-        return view('penjualan.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'details' => $details, 'activeMenu' => $activeMenu]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id): View
-    {
-        /**
-         * Retrieve specific penjualan data with id
-         */
-        $penjualan = PenjualanModel::find($id);
-
-        /**
-         * Retrieve all user_id and nama for make user easy to edit t_penjualan_detail tabel
-         */
-        $barangs = barangModel::all();
-
-        /**
-         * Retrieve all barang_id and barang_nama for make user easy to edit t_penjualan_detail tabel
-         */
-        $users = userModel::all();
-
-        /**
-         * Retrieve all barang_id and barang_nama for make user easy to edit t_penjualan_detail tabel
-         */
-        $details = PenjualanDetailModel::where('penjualan_id', $id)->get();
-
-        $breadcrumb = (object) [
-            'title' => 'Edit Penjualan',
-            'list' => ['Home', 'Penjualan', 'Edit']
-        ];
-
         $page = (object) [
-            'title' => 'Edit Penjualan'
+            'title' => 'Detail penjualan'
         ];
 
         $activeMenu = 'penjualan';
 
-        return view('penjualan.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'penjualan' => $penjualan, 'details' => $details, 'barangs' => $barangs, 'users' => $users, 'activeMenu' => $activeMenu]);
+        return view('penjualan.show', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'penjualan' => $penjualan,
+            'penjualan_detail' => $penjualan_detail,
+            'activeMenu' => $activeMenu
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id): RedirectResponse
-    {
-        /**
-         * Retrieve a portion of  input data for t_penjualan table
-         */
-        $penjualanValidated = $request->only('user_id', 'pembeli', 'penjualan_tanggal');
-
-        /**
-         * Update row t_penjualan Table data, base request form data
-         */
-        PenjualanModel::where('penjualan_id', $id)->update($penjualanValidated);
-
-        /**
-         * Updates row t_penjualan_detail Table data, base request form data
-         */
-        for ($i = 0; $i < $request->count; $i++) {
-            /**
-             * Retrieve a portion of the input data for t_penjualan table for each detail_id
-             */
-            $detailPenjualanValidated = [
-                'barang_id' => $request->barang_id[$i],
-                'jumlah' => $request->jumlah[$i]
-            ];
-            PenjualanDetailModel::where('detail_id', $request->id[$i])->update($detailPenjualanValidated);
-        }
-
-        return redirect('/penjualan')->with('success', 'Data Penjualan berhasil diubah');
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id): RedirectResponse
+    public function destroy($id)
     {
         $check = PenjualanModel::find($id);
-
-        /**
-         * check whatever penjualan data with id is available or not
-         */
         if (!$check) {
-            return redirect('/penjualan')->with('error', 'Data Penjualan tidak ditemukan');
+            return redirect('/penjualan')->with('error', 'Data Penjualan Tidak Ditemukan');
         }
 
         try {
-            /**
-             * If we delete t_penjualan, t_penjualan detail that use penjualan_id will be remove first
-             */
-            PenjualanDetailModel::where('penjualan_id', $check->penjualan_id)->delete();
-            /**
-             * Delete penjualan data
-             */
-            PenjualanModel::destroy($id);
-            return redirect('/penjualan')->with('success', 'Data Penjualan berhasil dihapus');
-        } catch (QueryException) {
-            return redirect('/penjualan')->with('error', 'Data Penjualan gagal dihapus, karena masih terdapat tabel lain yang terkait dengan data ini');
+            $check->delete(); 
+
+            return redirect('/penjualan')->with('success', 'Data Penjualan Berhasil Dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect('/penjualan')->with('error', 'Data Penjualan Gagal Dihapus Karena Masih Terdapat Tabel yang Terkait Dengan Data Ini');
         }
     }
 }

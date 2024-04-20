@@ -38,8 +38,8 @@ class KategoriController extends Controller
         $kategoris = KategoriModel::select('kategori_id', 'kategori_kode', 'kategori_nama');
 
         return DataTables::of($kategoris)
-            ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
-            ->addColumn('aksi', function ($kategori) { // menambahkan kolom aksi
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($kategori) {
                 $btn = '<a href="' . url('/kategori/' . $kategori->kategori_id) . '" class="btn btn-info btn-sm">Detail</a> ';
                 $btn .= '<a href="' . url('/kategori/edit/' . $kategori->kategori_id) . '" class="btn btn-warning btn-sm">Edit</a> ';
                 $btn .= '<form class="d-inline-block" method="POST" action="' . url('/kategori/' . $kategori->kategori_id) . '">' . csrf_field() . method_field('DELETE') .

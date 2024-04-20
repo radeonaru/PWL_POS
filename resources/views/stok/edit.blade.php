@@ -1,5 +1,4 @@
 @extends('layouts.template')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
@@ -9,49 +8,44 @@
         <div class="card-body">
             @empty($stok)
                 <div class="alert alert-danger alert-dismissible">
-                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5> Data yang Anda cari tidak ditemukan.
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
+                    Data yang Anda cari tidak ditemukan.
                 </div>
-                <a href="{{ url('stok') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+                <a href="{{ url('stok') }}" class="btn btn-sm btn-default mt2">Kembali</a>
             @else
                 <form method="POST" action="{{ url('/stok/' . $stok->stok_id) }}" class="form-horizontal">
-
                     @csrf
-                    <!--add 'PUT' method, because we use Route::put() for update-->
-                    {!! method_field('PUT') !!}
-                    <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Pengelola</label>
-                        <div class="col-11">
-                            <select class="form-control" id="user_id" name="user_id" required>
-                                <option value="">- Pilih Pengelola -</option>
-                                @foreach ($user as $item)
-                                    <option value="{{ $item->user_id }}" @if ($item->user_id == $stok->user_id) selected @endif>
-                                        {{ $item->nama }}</option>
-                                @endforeach
-                            </select>
-                            @error('user_id')
-                                <small class="form-text text-danger">{{ $message }}</small>
-                            @enderror
-                        </div>
-                    </div>
+                    {!! method_field('PUT') !!} <!-- tambahkan baris ini untuk proses edit
+                yang butuh method PUT -->
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Barang</label>
                         <div class="col-11">
-                            <select class="form-control" id="barang_id" name="barang_id" required>
-                                <option value="">- Pilih Barang -</option>
-                                @foreach ($barang as $item)
-                                    <option value="{{ $item->barang_id }}" @if ($item->barang_id == $stok->barang_id) selected @endif>
-                                        {{ $item->barang_nama }}</option>
-                                @endforeach
-                            </select>
+                        <input type="text" class="form-control" value="{{ $stok->barang->barang_nama }}" readonly>
+                        <input type="hidden" name="barang_id" value="{{ $stok->barang_id }}">                  
                             @error('barang_id')
                                 <small class="form-text text-danger">{{ $message }}</small>
                             @enderror
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Stok Tanggal</label>
+                        <label class="col-1 control-label col-form-label">User</label>
                         <div class="col-11">
-                            <input type="datetime-local" class="form-control" id="stok_tanggal" name="stok_tanggal"
+                            <select class="form-control" id="user_id" name="user_id" required>
+                                <option value="">- Pilih User -</option>
+                                @foreach($user as $item)
+                                <option value="{{ $item->user_id }}" @if($item->user_id ==
+                                    $stok->user_id) selected @endif>{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('user_id')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Tanggal Stok</label>
+                        <div class="col-11">
+                            <input type="date" class="form-control" id="stok_tanggal" name="stok_tanggal"
                                 value="{{ old('stok_tanggal', $stok->stok_tanggal) }}" required>
                             @error('stok_tanggal')
                                 <small class="form-text text-danger">{{ $message }}</small>
@@ -59,7 +53,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Jumlah</label>
+                        <label class="col-1 control-label col-form-label">Jumlah Stok</label>
                         <div class="col-11">
                             <input type="text" class="form-control" id="stok_jumlah" name="stok_jumlah"
                                 value="{{ old('stok_jumlah', $stok->stok_jumlah) }}" required>
@@ -68,6 +62,7 @@
                             @enderror
                         </div>
                     </div>
+
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label"></label>
                         <div class="col-11">
@@ -80,7 +75,6 @@
         </div>
     </div>
 @endsection
-
 @push('css')
 @endpush
 @push('js')

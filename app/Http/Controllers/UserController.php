@@ -42,28 +42,22 @@ class UserController extends Controller
         $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
             ->with('level');
 
-        //Filter Data User Berdasarkan Level_ID
         if($request->level_id){
             $users->where('level_id', $request->level_id);
         }
 
         return DataTables::of($users)
-            ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
-            ->addColumn('aksi', function ($user) { // menambahkan kolom aksi
+            ->addIndexColumn() 
+            ->addColumn('aksi', function ($user) {
                 $btn = '<a href="' . url('/user/' . $user->user_id) . '" class="btn btn-info btn-sm">Detail</a> ';
                 $btn .= '<a href="' . url('/user/edit/' . $user->user_id) . '" class="btn btn-warning btn-sm">Edit</a> ';
                 $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $user->user_id) . '">' . csrf_field() . method_field('DELETE') .
                     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';
                 return $btn;
             })
-            ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
+            ->rawColumns(['aksi'])
             ->make(true);
     }
-
-    // public function index(UserDataTable $dataTable)
-    // {
-    //     return $dataTable->render('user_tes.index');
-    // }
 
     public function create()
     {
@@ -107,18 +101,6 @@ class UserController extends Controller
         return redirect('/user')->with('success', 'Data User Berhasil Disimpan');
     }
 
-
-    // $password = Hash::make($validated['password']);
-
-    // UserModel::create([
-    //     'level_id' => $validated['level_id'],
-    //     'username' => $validated['username'],
-    //     'name' => $validated['name'],
-    //     'password' => Hash::make($validated['password']),
-    // ]);
-
-    // return redirect('/user_tes');
-    
     public function show(string $id)
     {
         $user = UserModel::with('level')->find($id);
@@ -185,12 +167,6 @@ class UserController extends Controller
 
         return redirect('/user')->with('success', 'Data User Berhasil Diubah');
 
-        // $user->level_id = $request->level_id;
-        // $user->username = $request->username;
-        // $user->name = $request->name;
-        // $user->password = $request->password;
-        // $user->save();
-        // return redirect('/user_tes');
     }
 
     public function destroy($id)
@@ -208,9 +184,6 @@ class UserController extends Controller
         catch (\Illuminate\Database\QueryException $e) {
             return redirect('/user')->with('error', 'Data User Gagal Dihapus Karena Masih Terdapat Tabel yang Terkait Dengan Data Ini');
         }
-        // UserModel::find($id)->delete();
-
-        // return redirect('/user_tes');
     }
 
 

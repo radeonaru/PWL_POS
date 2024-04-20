@@ -1,5 +1,4 @@
 @extends('layouts.template')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
@@ -7,15 +6,16 @@
             <div class="card-tools"></div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ url('penjualan') }}" class="form-horizontal">
+            <form method="POST" action="{{ url('penjualan/') }}" class="form-horizontal">
                 @csrf
                 <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Pengelola</label>
+                    <label class="col-1 control-label col-form-label">User</label>
                     <div class="col-11">
                         <select class="form-control" id="user_id" name="user_id" required>
-                            <option value="">- Pilih Pengelola -</option>
-                            @foreach ($users as $item)
-                                <option value="{{ $item->user_id }}">{{ $item->nama }}</option>
+                            <option value="">- Pilih User -</option>
+                            @foreach ($user as $item)
+                                <option value="{{ $item->user_id }}"
+                                    {{ old('user_id') == $item->user_id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                         @error('user_id')
@@ -24,64 +24,154 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Kode Penjualan</label>
+                    <label class="col-1 control-label col-form-label">Kode Penjulan</label>
                     <div class="col-11">
                         <input type="text" class="form-control" id="penjualan_kode" name="penjualan_kode"
-                            value="{{ old('penjualan_kode') }}" required>
-                        @error('penjualan_kode')
-                            <small class="form-text text-danger">{{ $message }}</small>
-                        @enderror
+                            value="{{ $penjualan_kode }}" required readonly>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Nama Pembeli</label>
+                    <label class="col-1 control-label col-form-label">Pembeli</label>
                     <div class="col-11">
                         <input type="text" class="form-control" id="pembeli" name="pembeli"
-                            value="{{ old('pembeli') }}" required>
+                            value="{{ old('pembeli') }}" required placeholder="Masukkan Nama Pembeli">
                         @error('pembeli')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-11 control-label col-form-label text-center">- Detail Penjualan -</label>
-                </div>
-                <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Nama Barang</label>
+                    <label class="col-1 control-label col-form-label">Tanggal</label>
                     <div class="col-11">
-                        <select class="form-control" id="barang_id" name="barang_id" required>
-                            <option value="">- Pilih Barang -</option>
-                            @foreach ($barangs as $item)
-                                <option value="{{ $item->barang_id }}">{{ $item->barang_nama }}</option>
-                            @endforeach
-                        </select>
-                        @error('barang_id')
+                        <input type="date" class="form-control" id="penjualan_tanggal" name="penjualan_tanggal"
+                            value="{{ $date }}" readonly placeholder="Masukkan Tanggal Penjualan">
+                        @error('penjualan_tanggal')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Jumlah Barang</label>
-                    <div class="col-11">
-                        <input type="text" class="form-control" id="jumlah" name="jumlah"
-                            value="{{ old('jumlah') }}" required>
-                        @error('jumlah')
-                            <small class="form-text text-danger">{{ $message }}</small>
-                        @enderror
+                <br>
+                <div id="formBarangContainer">
+                    <div id="formBarang" class="form-barang">
+                        <div class="card-header">
+                            <h3 class="card-title">Detail Transaksi Barang</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-danger btn-sm hapusBarang">Hapus</button>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="form-group row">
+                            <label class="col-1 control-label col-form-label">Barang</label>
+                            <div class="col-11">
+                                <select class="form-control" id="barang_id" name="barang_id[]" required>
+                                    <option value="">- Pilih Barang -</option>
+                                    @foreach ($barang as $item)
+                                        <option value="{{ $item->barang_id }}" data-harga_jual="{{ $item->harga_jual }}">
+                                            {{ $item->barang_nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('barang_id')
+                                    <small class="form-text text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-1 control-label col-form-label">Harga</label>
+                            <div class="col-11">
+                                <input type="number" class="form-control" id="harga" name="harga[]" required readonly>
+                                @error('harga.*')
+                                    <small class="form-text text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-1 control-label col-form-label">Jumlah</label>
+                            <div class="col-11">
+                                <input type="number" class="form-control" id="jumlah" name="jumlah[]" required>
+                                @error('jumlah.*')
+                                    <small class="form-text text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-1 control-label col-form-label"></label>
-                    <div class="col-11">
-                        <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                        <a class="btn btn-sm btn-default ml-1" href="{{ url('barang') }}">Kembali</a>
-                    </div>
-                </div>
+                <button type="button" class="btn btn-success mt-3" id="tambahBarang">Tambah Barang</button>
+                <br><br><br>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-warning" id="cekHarga">Cek Harga</button>
+                <a class="btn btn-default ml-1" href="{{ url('penjualan') }}">Kembali</a>
             </form>
+        </div>
+    </div>
+    <div class="card card-outline card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Total Transaksi</h3>
+            <br><br>
+            <label class="col-1 control-label col-form-label">
+                <span id="totalTransaksi">Rp. 0</span>
+            </label>
         </div>
     </div>
 @endsection
 @push('css')
 @endpush
 @push('js')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Menambahkan form barang baru saat tombol "Tambah Barang" ditekan
+            $('#tambahBarang').click(function() {
+                var formBarang = $('#formBarang').clone();
+                formBarang.find('input').val('');
+    
+                var timestamp = new Date().getTime(); // Membuat ID unik
+                formBarang.find('select').attr('id', 'barang_id_' + timestamp);
+                formBarang.find('input[name="harga[]"]').attr('id', 'harga_' + timestamp);
+                formBarang.find('input[name="harga[]"]').attr('name',
+                    'harga[]'); // Menghapus pengaturan name
+                formBarang.find('input[name="jumlah[]"]').attr('id', 'jumlah_' + timestamp);
+                formBarang.find('input[name="jumlah[]"]').attr('name',
+                    'jumlah[]'); // Menghapus pengaturan name
+    
+                $('#formBarangContainer').append(formBarang);
+    
+                // Menambahkan tombol "Hapus" untuk menghapus formulir barang yang baru ditambahkan
+                formBarang.find('.hapusBarang').click(function() {
+                    $(this).closest('.form-barang').remove();
+                });
+    
+                // Menambahkan penanganan perubahan harga untuk elemen formulir barang yang baru ditambahkan
+                $('#barang_id_' + timestamp).change(function() {
+                    var selectedOption = $(this).find('option:selected');
+                    var harga_jual = selectedOption.data('harga_jual');
+                    $(this).closest('.form-barang').find('input[name="harga[]"]').val(harga_jual);
+                });
+            });
+    
+            // Menambahkan penanganan perubahan harga untuk elemen formulir barang yang asli
+            $('#barang_id').change(function() {
+                var selectedOption = $(this).find('option:selected');
+                var harga_jual = selectedOption.data('harga_jual');
+                $('#harga').val(harga_jual);
+            });
+    
+            $('#cekHarga').on('click', function() {
+                var total = 0;
+                // Loop melalui setiap form barang
+                $('.form-barang').each(function() {
+                    var jumlah = $(this).find('input[name="jumlah[]"]').val();
+                    var harga = $(this).find('input[name="harga[]"]').val();
+                    total += jumlah * harga; // Hitung total
+                });
+                // Tampilkan total di dalam span dengan id totalTransaksi
+                $('#totalTransaksi').text('Rp. ' + total);
+            });
+    
+        });
+    </script>
+    
 @endpush
