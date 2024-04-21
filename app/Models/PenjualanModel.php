@@ -18,7 +18,7 @@ class PenjualanModel extends Model
 
     public function penjualanDetail(): HasMany
     {
-        return $this->hasOne(PenjualanDetailModel::class, 'penjualan_id', 'penjualan_id');
+        return $this->hasMany(PenjualanDetailModel::class, 'penjualan_id', 'penjualan_id');
     }
 
     public function user(): BelongsTo
