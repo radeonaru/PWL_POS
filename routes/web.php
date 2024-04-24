@@ -9,6 +9,22 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\PenjualanController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ManagerController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -90,4 +106,20 @@ Route::prefix('/penjualan')->group(function () {
     Route::post('/', [PenjualanController::class, 'store']);
     Route::get('/{id}', [PenjualanController::class, 'show']);
     Route::delete('/{id}', [PenjualanController::class, 'destroy']);
+});
+
+Route::get('login', [AuthController::class, 'index'])->name('login');
+Route::get('register', [AuthController::class, 'register'])->name('register');
+Route::post('proses_login', [AuthController::class, 'proses_login'])->name('proses_login');
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('proses_register', [AuthController::class, 'proses_register'])->name('proses_register');
+
+Route::group(['middleware' => ['auth']], function () {
+
+    Route::group(['middleware' => ['Cek_login:1']], function () {
+        Route::resource('admin', AdminController::class);
+    });
+    Route::group(['middleware' => ['Cek_login:2']], function () {
+        Route::resource('manager', ManagerController::class);
+    });
 });

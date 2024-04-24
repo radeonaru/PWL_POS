@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\RedirectResponse;
 
 class StorePostRequest extends FormRequest
 {
@@ -12,7 +11,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,9 +22,11 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kategori_kode' => 'required|max:3',
-            'kategori_nama' => 'required',
+            'kategori_kode' => 'required',
+            'kategori_nama' => 'required'  
         ];
     }
+       
 
+    
 }
