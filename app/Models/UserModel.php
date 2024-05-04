@@ -6,10 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\LevelModel;
-use Illuminate\Foundation\Auth\User as userAuthentication;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class UserModel extends userAuthentication 
+class UserModel extends Authenticatable implements JWTSubject
 {
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+    
     use HasFactory;
     
     protected $table = 'm_user';

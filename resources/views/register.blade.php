@@ -11,7 +11,7 @@
     @php( $register_url = $register_url ? url($register_url) : '')
 @endif
 
-@section('auth_header', __ ('register message'))
+@section('auth_header', __ ('Register a new Membership'))
 
 @section('auth_body')
     <form action="{{route('proses_register')}}" method="post">
@@ -52,7 +52,7 @@
         </div>
         {{-- Password field --}}
         <div class="input-group mb-3">
-            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ __ ('password') }}">
+            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ __ ('Password') }}">
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -70,7 +70,7 @@
         {{-- Register button --}}
         <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
             <span class="fas fa-user-plus"></span>
-            {{ __ ('register') }}
+            {{ __ ('Register') }}
         </button>
     </form>
 @stop
