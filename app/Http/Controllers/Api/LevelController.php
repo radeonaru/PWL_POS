@@ -21,7 +21,7 @@ class LevelController extends Controller
 
     public function show(LevelModel $level)
     {
-        return LevelModel::find($level);
+        return LevelModel::find($level->level_id);
     }
 
     public function update(Request $request, LevelModel $level)

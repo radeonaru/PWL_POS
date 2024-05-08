@@ -21,7 +21,7 @@ class UserController extends Controller
 
     public function show(UserModel $user)
     {
-        return UserModel::find($user);
+        return UserModel::find($user->user_id);
     }
 
     public function update(Request $request, UserModel $user)
