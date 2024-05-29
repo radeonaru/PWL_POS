@@ -16,20 +16,25 @@ class FileUploadController extends Controller
         // dump($request->berkas);
         // dump($request->file('file'));
         // return "Pemrosesan file upload disini";
-        if ($request->hasFile('berkas')) {
-            echo "path(): " . $request->berkas->path(); 
-            echo "<br>";
-            echo "extension(): " . $request->berkas->extension();
-            echo "<br>";
-            echo "getClientOriginalExtension(): " . $request->berkas->getClientOriginalExtension();
-            echo "<br>";
-            echo "getClientOriginalName(): " . $request->berkas->getClientOriginalName();
-            echo "<br>";
-            echo "getSize(): " . $request->berkas->getSize();
-        }
-        else 
-        {
-            echo "Tidak ada file yang diupload";
-        }
+        // if ($request->hasFile('berkas')) {
+        //     echo "path(): " . $request->berkas->path(); 
+        //     echo "<br>";
+        //     echo "extension(): " . $request->berkas->extension();
+        //     echo "<br>";
+        //     echo "getClientOriginalExtension(): " . $request->berkas->getClientOriginalExtension();
+        //     echo "<br>";
+        //     echo "getClientOriginalName(): " . $request->berkas->getClientOriginalName();
+        //     echo "<br>";
+        //     echo "getSize(): " . $request->berkas->getSize();
+        // }
+        // else 
+        // {
+        //     echo "Tidak ada file yang diupload";
+        // }
+
+        $request->validate([
+            'berkas' => 'required|file|image|max:5000',
+        ]);
+        echo $request->berkas->getClientOriginalName()."lolos validasi";
     }
 }
