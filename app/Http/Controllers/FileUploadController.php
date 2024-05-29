@@ -13,39 +13,16 @@ class FileUploadController extends Controller
 
     public function prosesFileUpload(Request $request)
     {
-        // dump($request->berkas);
-        // dump($request->file('file'));
-        // return "Pemrosesan file upload disini";
-        // if ($request->hasFile('berkas')) {
-        //     echo "path(): " . $request->berkas->path(); 
-        //     echo "<br>";
-        //     echo "extension(): " . $request->berkas->extension();
-        //     echo "<br>";
-        //     echo "getClientOriginalExtension(): " . $request->berkas->getClientOriginalExtension();
-        //     echo "<br>";
-        //     echo "getClientOriginalName(): " . $request->berkas->getClientOriginalName();
-        //     echo "<br>";
-        //     echo "getSize(): " . $request->berkas->getSize();
-        // }
-        // else 
-        // {
-        //     echo "Tidak ada file yang diupload";
-        // }
-
         $request->validate([
+            'nama' => 'required',
             'berkas' => 'required|file|image|max:500',
         ]);
-        $extFile=$request->berkas->getClientOriginalName();
-        $namaFile ='web'.time().".".$extFile;
-
-        $path = $request->berkas->move('gambar', $namaFile);
-        $path = str_replace("\\", "//", $path);
-        echo "Variabel path berisi:$path <br>";
-
-        $pathBaru=asset('gambar/'.$namaFile);
-        echo "File berhasil diupload, file berada di: $path";
-        echo "<br>";
-        echo "Tampilkan link: <a href='$pathBaru'>$pathBaru</a>";
-        // echo $request->berkas->getClientOriginalName()."lolos validasi";
+        $extFile=$request->berkas->getClientOriginalExtension();
+        $namaFile = $request->nama . "." . $extFile;
+        $path = $request->berkas->storeAs('uploads', $namaFile);
+        
+        echo "Gambar berhasil di upload ke <a href='storage/$path'>$namaFile</a>";
+        echo "<br><br>";
+        echo "<img width=500 src='storage/$path'/>";
     }
 }
