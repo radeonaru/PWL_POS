@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.template')
+@section('content')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,6 @@
 </head>
 <body>
     <div class="container mt-3">
-        <h2>File Upload</h2>
-        <hr>
 
         <form action="{{ url ('/file-upload')}}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -35,4 +33,4 @@
         </form>
     </div>
 </body>
-</html>
+@endsection

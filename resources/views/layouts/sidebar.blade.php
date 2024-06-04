@@ -61,4 +61,15 @@
             </li>
         </ul>
     </nav>
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-header">File Upload</li>
+            <li class="nav-item">
+                <a href="{{ url('/file-upload') }}" class="nav-link {{ $activeMenu == 'fileUpload' ? 'active' : '' }} ">
+                    <i class="nav-icon fas fa-cloud"></i>
+                    <p>File Upload</p>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
